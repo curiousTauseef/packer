@@ -1,0 +1,36 @@
+Coder: Maha M. Hamza
+Assignment for Mobiquity Inc
+
+Assignment Description
+----------------------
+You want to send your friend a package with different things.
+Each thing you put inside the package has such parameters as index number, weight and cost. The
+package has a weight limit. Your goal is to determine which things to put into the package so that the
+total weight is less than or equal to the package limit and the total cost is as large as possible.
+
+
+
+Design patterns Used
+--------------------
+1- Singleton Design pattern
+   used this creational pattern to grant creating objects to single class as well as ensuring the 
+   singularity of objects created.
+   StaticPreDefined: is the Singleton class that is used to create required objects in addition to carry 
+                     static attributes required in processing
+                   
+2- MVC
+  used as type of code organization and separate application's concerns
+  
+Algorithm
+---------
+1- start 
+2- take input String from user "expect to be data file path"
+3- validate the input 
+4- through APIException in case of null, empty or malformed input and terminate the processing
+5- parse the file data and store them into list of packages
+6- start processing by sorting the list by highest price and send pick the best items
+7- convert output into string
+8- return with the output
+ 
+                     
+    
