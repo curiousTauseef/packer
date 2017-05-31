@@ -1,9 +1,13 @@
 package com.mobiquityinc.packer.processing;
 
+import static com.mobiquityinc.CustomAssert.assertObject;
+
 import java.util.ArrayList;
 import java.util.List;
-import static com.mobiquityinc.CustomAssert.assertObject;
-import com.mobiquityinc.configs.StaticPreDefined;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.mobiquityinc.configs.PackerInjector;
 import com.mobiquityinc.packer.pojos.Item;
 import com.mobiquityinc.packer.pojos.Package;
 
@@ -12,6 +16,9 @@ import junit.framework.TestCase;
 public class TestPackaging extends TestCase {
 
 	public void testPickAPackage() {
+		Injector injector = Guice.createInjector(new PackerInjector());
+		Packaging packaging = injector.getInstance(Packaging.class);
+
 		Package pkg = new Package();
 		pkg.setPackageMaximumWeight(81.0);
 		List<Item> items = new ArrayList<>();
@@ -25,7 +32,7 @@ public class TestPackaging extends TestCase {
 
 		List<Package> packages = new ArrayList<>();
 		packages.add(pkg);
-		assertObject("4\n", StaticPreDefined.getPackaging().pickAPackage(packages));
+		assertObject("4\n", packaging.pickAPackage(packages));
 	}
 
 }

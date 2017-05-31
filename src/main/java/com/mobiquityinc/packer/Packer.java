@@ -2,8 +2,13 @@ package com.mobiquityinc.packer;
 
 import java.util.List;
 
-import com.mobiquityinc.configs.StaticPreDefined;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.mobiquityinc.configs.PackerInjector;
+import com.mobiquityinc.packer.parser.Parser;
 import com.mobiquityinc.packer.pojos.Package;
+import com.mobiquityinc.packer.processing.Packaging;
+import com.mobiquityinc.packer.validators.Validator;
 
 /**
  * 
@@ -14,6 +19,8 @@ import com.mobiquityinc.packer.pojos.Package;
  */
 public class Packer {
 
+	public static Injector injector = Guice.createInjector(new PackerInjector());
+
 	/**
 	 * 
 	 * @param absPath
@@ -22,12 +29,15 @@ public class Packer {
 	 * @return {@link String} &nbsp; [the output]
 	 */
 	public static String pack(String absPath) {
+		Validator validator = injector.getInstance(Validator.class);
+		Parser parser = injector.getInstance(Parser.class);
+		Packaging packaging = injector.getInstance(Packaging.class);
 		// validate path , must terminate the program in case of failure
-		StaticPreDefined.getValidator().validate(absPath);
+		validator.validate(absPath);
 		// parse file
-		List<Package> packages = StaticPreDefined.getProcessing().parseFile(absPath);
+		List<Package> packages = parser.parseFile(absPath);
 		// processing
-		return StaticPreDefined.getPackaging().pickAPackage(packages);
+		return packaging.pickAPackage(packages);
 	}
 
 }
