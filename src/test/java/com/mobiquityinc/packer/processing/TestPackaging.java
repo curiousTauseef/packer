@@ -32,7 +32,7 @@ public class TestPackaging extends TestCase {
 
 		List<Package> packages = new ArrayList<>();
 		packages.add(pkg);
-		assertObject("4\n", packaging.pickAPackage(packages));
+		assertObject("4\n", packaging.selectPackage(packages));
 	}
 
 }

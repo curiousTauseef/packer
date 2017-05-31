@@ -45,16 +45,19 @@ public class ParserService implements Parser {
 	@Override
 	public List<Package> parseFile(String filePath) {
 		ValidatorService validator = injector.getInstance(ValidatorService.class);
+		validator.validate(filePath);
 		List<Package> packages = new ArrayList<>();
 		final Path path = Paths.get(filePath);
 		try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
-			lines.forEach(e -> packages.add(parsePackage(e)));
+			lines.forEach(e -> {
+				Package parsedPackage = parsePackage(e);
+				validator.validate(parsedPackage);
+				packages.add(parsedPackage);
+			});
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new APIException(PackerConfigs.getProprtyValue("PARSING_EXCEPTION"), e);
 		}
-
-		// validate input data
-		packages.forEach(validator::validate);
 
 		return packages;
 	}
@@ -69,29 +72,22 @@ public class ParserService implements Parser {
 	 */
 	private Package parsePackage(String one) throws APIException {
 
-		Package pkg = new Package();
-		try {
-			String[] item = one.split(":");
+		String[] item = one.split(":");
 
-			// replacing "\\p{C}" cause of the non-printable Unicode character
-			// that may cause input exception
-			pkg.setPackageMaximumWeight(Double.parseDouble(item[0].replaceAll("\\s\\p{C}", "")));
+		// replacing "\\p{C}" cause of the non-printable Unicode character
+		// that may cause input exception
+		String packageWeightManupulation = item[0].replaceAll("\\s\\p{C}", "");
+		Double packageWeight = Double.parseDouble(packageWeightManupulation);
 
-			List<Item> items = Arrays.asList(item[1].trim().split(" ")).stream().map(itemString -> {
-				String[] itemDetails = itemString.split(",");
-				Integer index = Integer.parseInt(itemDetails[0].substring(1));
-				Double weight = Double.parseDouble(itemDetails[1]);
-				Double price = Double.parseDouble(itemDetails[2].substring(1, itemDetails[2].length() - 1));
-				return new Item(index, weight, price);
-			}).collect(Collectors.toList());
+		List<Item> items = Arrays.asList(item[1].trim().split(" ")).stream().map(itemString -> {
+			String[] itemDetails = itemString.split(",");
+			Integer index = Integer.parseInt(itemDetails[0].substring(1));
+			Double weight = Double.parseDouble(itemDetails[1]);
+			Double price = Double.parseDouble(itemDetails[2].substring(1, itemDetails[2].length() - 1));
+			return new Item(index, weight, price);
+		}).collect(Collectors.toList());
 
-			pkg.setItems(items);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new APIException("Parsing Error in -> " + one, e);
-		}
-		return pkg;
+		return new Package(packageWeight, items);
 	}
 
 }

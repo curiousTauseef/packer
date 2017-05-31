@@ -8,7 +8,6 @@ import com.mobiquityinc.configs.PackerInjector;
 import com.mobiquityinc.packer.parser.Parser;
 import com.mobiquityinc.packer.pojos.Package;
 import com.mobiquityinc.packer.processing.Packaging;
-import com.mobiquityinc.packer.validators.ValidatorService;
 
 /**
  * 
@@ -30,17 +29,18 @@ public class Packer {
 
 		Injector injector = Guice.createInjector(new PackerInjector());
 
-		ValidatorService validator = injector.getInstance(ValidatorService.class);
-
 		Parser parser = injector.getInstance(Parser.class);
 		Packaging packaging = injector.getInstance(Packaging.class);
 
-		// validate path , must terminate the program in case of failure
-		validator.validate(absPath);
 		// parse file
 		List<Package> packages = parser.parseFile(absPath);
 		// processing
-		return packaging.pickAPackage(packages);
+		System.out.println(packaging.selectPackage(packages));
+		return packaging.selectPackage(packages);
+	}
+
+	public static void main(String[] args) {
+		pack("resources\\data.txt");
 	}
 
 }

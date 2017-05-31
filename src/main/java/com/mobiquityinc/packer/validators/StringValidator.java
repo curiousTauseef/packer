@@ -13,7 +13,7 @@ import com.mobiquityinc.exception.PathValidationException;
 public class StringValidator implements Validator<String> {
 
 	@Override
-	public void validate(String t) throws APIException {
+	public void validate(String t) throws APIException {		
 		if ((((String) t).replaceAll(" ", "").length() == 0)) {
 			throw new APIException(PackerConfigs.getProprtyValue("EMPTY_INPUT"));
 		}

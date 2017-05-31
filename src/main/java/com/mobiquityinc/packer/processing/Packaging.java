@@ -11,5 +11,5 @@ import com.mobiquityinc.packer.pojos.Package;
  */
 public interface Packaging {
 
-	String pickAPackage(List<Package> packages);
+	String selectPackage(List<Package> packages);
 }
