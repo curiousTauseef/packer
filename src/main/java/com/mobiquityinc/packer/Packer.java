@@ -35,12 +35,7 @@ public class Packer {
 		// parse file
 		List<Package> packages = parser.parseFile(absPath);
 		// processing
-		System.out.println(packaging.selectPackage(packages));
 		return packaging.selectPackage(packages);
-	}
-
-	public static void main(String[] args) {
-		pack("resources\\data.txt");
 	}
 
 }

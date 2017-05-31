@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Properties;
 
+import com.mobiquityinc.exception.APIException;
+
 /**
  * this interface will include all pre-defined values that will be used during
  * packaging life cycle<br/>
@@ -29,9 +31,9 @@ public interface PackerConfigs {
 		try {
 			properties.load(new FileReader("resources/msg.properties"));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new APIException("FileNotFoundException");
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new APIException("IOException");
 		}
 
 		return MessageFormat.format(properties.getProperty(key), args);

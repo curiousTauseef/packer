@@ -55,7 +55,6 @@ public class ParserService implements Parser {
 				packages.add(parsedPackage);
 			});
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new APIException(PackerConfigs.getProprtyValue("PARSING_EXCEPTION"), e);
 		}
 
