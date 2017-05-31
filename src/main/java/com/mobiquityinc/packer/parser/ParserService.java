@@ -14,8 +14,9 @@ import java.util.stream.Stream;
 import javax.inject.Singleton;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.mobiquityinc.configs.StaticPreDefinedData;
 import com.mobiquityinc.exception.APIException;
-import com.mobiquityinc.packer.Packer;
 import com.mobiquityinc.packer.pojos.Item;
 import com.mobiquityinc.packer.pojos.Package;
 import com.mobiquityinc.packer.validators.Validator;
@@ -30,6 +31,9 @@ import com.mobiquityinc.packer.validators.Validator;
 public class ParserService implements Parser {
 
 	@Inject
+	Injector injector;
+
+	@Inject
 	public ParserService() {
 	}
 
@@ -40,13 +44,13 @@ public class ParserService implements Parser {
 	 */
 	@Override
 	public List<Package> parseFile(String filePath) {
-		Validator validator = Packer.injector.getInstance(Validator.class);
+		Validator validator = injector.getInstance(Validator.class);
 		List<Package> packages = new ArrayList<>();
 		final Path path = Paths.get(filePath);
 		try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
 			lines.forEach(e -> packages.add(parsePackage(e)));
 		} catch (IOException e) {
-			throw new APIException(PARSING_EXCEPTION, e);
+			throw new APIException(StaticPreDefinedData.getProprtyValue("PARSING_EXCEPTION"), e);
 		}
 
 		// validate input data
@@ -81,11 +85,12 @@ public class ParserService implements Parser {
 				String[] finalValue = value.split(",");
 				// item after parsing
 				items.add(new Item(Integer.parseInt(finalValue[0]), Double.parseDouble(finalValue[1]),
-						Double.parseDouble(finalValue[2].replace("â‚¬", ""))));
+						Double.parseDouble(finalValue[2].replace("€", ""))));
 			} // end of while
 			pkg.setItems(items);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new APIException("Parsing Error in -> " + one, e);
 		}
 		return pkg;

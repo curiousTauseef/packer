@@ -27,19 +27,19 @@ public class ValidatorService implements Validator {
 		 * null check
 		 */
 		if (null == t) {
-			throw new APIException(NULL_INPUT);
+			throw new APIException(StaticPreDefinedData.getProprtyValue("NULL_INPUT"));
 		}
 		/**
 		 * string validation
 		 */
 		else if (t.getClass() == String.class) {
 			if ((((String) t).replaceAll(" ", "").length() == 0)) {
-				throw new APIException(EMPTY_INPUT);
+				throw new APIException(StaticPreDefinedData.getProprtyValue("EMPTY_INPUT"));
 			}
 			try {
 				Paths.get((String) t);
 			} catch (InvalidPathException | NullPointerException e) {
-				throw new PathValidationException(INVALID_PATH, e.getMessage());
+				throw new PathValidationException(StaticPreDefinedData.getProprtyValue("INVALID_PATH"), e.getMessage());
 			}
 		}
 		/**
@@ -51,14 +51,17 @@ public class ValidatorService implements Validator {
 		else if (t.getClass() == Package.class) {
 			Package pkg = (Package) t;
 			if (pkg.getPackageMaximumWeight() > StaticPreDefinedData.MAX_WEIGHT_OF_PACKAGE) {
-				throw new APIException(INVALID_PACKAGE_WEIGHT);
+				throw new APIException(StaticPreDefinedData.getProprtyValue("INVALID_PACKAGE_WEIGHT",
+						StaticPreDefinedData.MAX_WEIGHT_OF_PACKAGE));
 			} else if (pkg.getItems().size() > StaticPreDefinedData.NUMBER_OF_ITEMS_TO_PICK_FROM) {
-				throw new APIException(INVALID_ITEMS_COUNT);
+				throw new APIException(StaticPreDefinedData.getProprtyValue("INVALID_ITEMS_COUNT",
+						StaticPreDefinedData.NUMBER_OF_ITEMS_TO_PICK_FROM));
 			} else {
 				pkg.getItems().forEach(item -> {
 					if (item.getWeight() > StaticPreDefinedData.MAX_WEIGHT_OF_ITEM
 							|| item.getCost() > StaticPreDefinedData.MAX_COST_OF_ITEM) {
-						throw new APIException(INVALID_WEIGHT_COST);
+						throw new APIException(StaticPreDefinedData.getProprtyValue("INVALID_WEIGHT_COST",
+								StaticPreDefinedData.MAX_COST_OF_ITEM));
 					}
 				});
 			}

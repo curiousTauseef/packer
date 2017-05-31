@@ -19,8 +19,6 @@ import com.mobiquityinc.packer.validators.Validator;
  */
 public class Packer {
 
-	public static Injector injector = Guice.createInjector(new PackerInjector());
-
 	/**
 	 * 
 	 * @param absPath
@@ -29,9 +27,12 @@ public class Packer {
 	 * @return {@link String} &nbsp; [the output]
 	 */
 	public static String pack(String absPath) {
+
+		Injector injector = Guice.createInjector(new PackerInjector());
 		Validator validator = injector.getInstance(Validator.class);
 		Parser parser = injector.getInstance(Parser.class);
 		Packaging packaging = injector.getInstance(Packaging.class);
+
 		// validate path , must terminate the program in case of failure
 		validator.validate(absPath);
 		// parse file

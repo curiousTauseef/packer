@@ -12,8 +12,6 @@ import com.mobiquityinc.packer.pojos.Package;
  */
 public interface Parser {
 
-	String PARSING_EXCEPTION = "Parsing Exception";
-
 	List<Package> parseFile(String filePath);
 
 }
