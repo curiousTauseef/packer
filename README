@@ -20,7 +20,9 @@ Design patterns Used
                    
 2- MVC
   used as type of code organization and separate application's concerns
-  
+
+3- factory
+  to construct validator according to type
 Algorithm
 ---------
 1- start 

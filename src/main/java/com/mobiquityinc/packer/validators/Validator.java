@@ -9,9 +9,8 @@ import com.mobiquityinc.exception.APIException;
  * @author Maha M. Hamza
  *
  */
-public interface Validator {
+public interface Validator<T> {
 
-
-	void validate(Object t) throws APIException;
+	void validate(T t) throws APIException;
 
 }

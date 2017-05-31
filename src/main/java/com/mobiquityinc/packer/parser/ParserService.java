@@ -6,20 +6,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Singleton;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.mobiquityinc.configs.StaticPreDefinedData;
+import com.mobiquityinc.configs.PackerConfigs;
 import com.mobiquityinc.exception.APIException;
 import com.mobiquityinc.packer.pojos.Item;
 import com.mobiquityinc.packer.pojos.Package;
-import com.mobiquityinc.packer.validators.Validator;
+import com.mobiquityinc.packer.validators.ValidatorService;
 
 /**
  * This class include the packaging process implementation
@@ -44,13 +44,13 @@ public class ParserService implements Parser {
 	 */
 	@Override
 	public List<Package> parseFile(String filePath) {
-		Validator validator = injector.getInstance(Validator.class);
+		ValidatorService validator = injector.getInstance(ValidatorService.class);
 		List<Package> packages = new ArrayList<>();
 		final Path path = Paths.get(filePath);
 		try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
 			lines.forEach(e -> packages.add(parsePackage(e)));
 		} catch (IOException e) {
-			throw new APIException(StaticPreDefinedData.getProprtyValue("PARSING_EXCEPTION"), e);
+			throw new APIException(PackerConfigs.getProprtyValue("PARSING_EXCEPTION"), e);
 		}
 
 		// validate input data
@@ -68,25 +68,23 @@ public class ParserService implements Parser {
 	 * @throws APIException
 	 */
 	private Package parsePackage(String one) throws APIException {
+
 		Package pkg = new Package();
 		try {
-			String[] oneItems = one.split(":");
+			String[] item = one.split(":");
+
 			// replacing "\\p{C}" cause of the non-printable Unicode character
 			// that may cause input exception
-			pkg.setPackageMaximumWeight(Double.parseDouble(oneItems[0].replaceAll(" ", "").replaceAll("\\p{C}", "")));
+			pkg.setPackageMaximumWeight(Double.parseDouble(item[0].replaceAll("\\s\\p{C}", "")));
 
-			List<Item> items = new ArrayList<>();
-			// pattern to parse what between brackets ( and )
-			Pattern pattern = Pattern.compile("\\((.*?)\\)");
+			List<Item> items = Arrays.asList(item[1].trim().split(" ")).stream().map(itemString -> {
+				String[] itemDetails = itemString.split(",");
+				Integer index = Integer.parseInt(itemDetails[0].substring(1));
+				Double weight = Double.parseDouble(itemDetails[1]);
+				Double price = Double.parseDouble(itemDetails[2].substring(1, itemDetails[2].length() - 1));
+				return new Item(index, weight, price);
+			}).collect(Collectors.toList());
 
-			Matcher matcher = pattern.matcher(oneItems[1].replaceAll(" ", ""));
-			while (matcher.find()) {
-				String value = matcher.group().replace("(", "").replace(")", "");
-				String[] finalValue = value.split(",");
-				// item after parsing
-				items.add(new Item(Integer.parseInt(finalValue[0]), Double.parseDouble(finalValue[1]),
-						Double.parseDouble(finalValue[2].replace("€", ""))));
-			} // end of while
 			pkg.setItems(items);
 
 		} catch (Exception e) {

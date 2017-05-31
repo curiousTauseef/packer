@@ -8,7 +8,7 @@ import com.mobiquityinc.configs.PackerInjector;
 import com.mobiquityinc.packer.parser.Parser;
 import com.mobiquityinc.packer.pojos.Package;
 import com.mobiquityinc.packer.processing.Packaging;
-import com.mobiquityinc.packer.validators.Validator;
+import com.mobiquityinc.packer.validators.ValidatorService;
 
 /**
  * 
@@ -29,7 +29,9 @@ public class Packer {
 	public static String pack(String absPath) {
 
 		Injector injector = Guice.createInjector(new PackerInjector());
-		Validator validator = injector.getInstance(Validator.class);
+
+		ValidatorService validator = injector.getInstance(ValidatorService.class);
+
 		Parser parser = injector.getInstance(Parser.class);
 		Packaging packaging = injector.getInstance(Packaging.class);
 
