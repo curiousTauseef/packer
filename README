@@ -1,5 +1,4 @@
 Coder: Maha M. Hamza
-Assignment for Mobiquity Inc
 
 Assignment Description
 ----------------------
@@ -9,20 +8,6 @@ package has a weight limit. Your goal is to determine which things to put into t
 total weight is less than or equal to the package limit and the total cost is as large as possible.
 
 
-
-Design patterns Used
---------------------
-1- Singleton Design pattern
-   used this creational pattern to grant creating objects to single class as well as ensuring the 
-   singularity of objects created.
-   StaticPreDefined: is the Singleton class that is used to create required objects in addition to carry 
-                     static attributes required in processing
-                   
-2- MVC
-  used as type of code organization and separate application's concerns
-
-3- factory
-  to construct validator according to type
 Algorithm
 ---------
 1- start 
